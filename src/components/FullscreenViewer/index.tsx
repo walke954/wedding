@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon, DownloadIcon } from '../../icons'
 import type { PhotoEntry } from '../../photos'
 import styles from './styles.module.css'
@@ -14,6 +14,13 @@ export function FullscreenViewer({ photos, index, onChange, onClose }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const total = photos.length
   const photo = photos[index]
+
+  // Show a spinner while each newly-selected image loads. Reset to loading
+  // whenever the index changes; the <img> onLoad/onError handlers clear it.
+  const [loading, setLoading] = useState(true)
+  useEffect(() => {
+    setLoading(true)
+  }, [index])
 
   useLayoutEffect(() => {
     ref.current?.requestFullscreen().catch(() => {})
@@ -42,7 +49,19 @@ export function FullscreenViewer({ photos, index, onChange, onClose }: Props) {
 
   return (
     <div ref={ref} className={styles.viewer}>
-      <img src={photo.full} alt="" />
+      {loading && (
+        <div className={styles.spinner} role="status" aria-label="Loading photo">
+          <div className={styles.spinnerRing} />
+        </div>
+      )}
+      <img
+        key={photo.id}
+        src={photo.full}
+        alt=""
+        className={loading ? styles.imgLoading : ''}
+        onLoad={() => setLoading(false)}
+        onError={() => setLoading(false)}
+      />
       <button
         type="button"
         className={`${styles.arrow} ${styles.arrowPrev}`}

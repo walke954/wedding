@@ -21,7 +21,7 @@ export const photos: PhotoEntry[] = driveFiles
   .map(({ id, name }) => ({
     id,
     name,
-    thumb: sized(id, 1200),
+    thumb: sized(id, 800),
     full: sized(id, 2000),
     original: `https://drive.google.com/uc?export=download&id=${id}`,
   }))
