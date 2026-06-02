@@ -1,22 +1,17 @@
-#!/usr/bin/env node
-// Generates src/photos.manifest.ts from a public Google Drive folder.
-//
-// Setup (one time):
-//   1. Upload photos to a Drive folder; share it as "Anyone with the link".
-//   2. Create a Google API key with the Drive API enabled:
-//        https://console.cloud.google.com/apis/credentials
-//      (The key is only used here, locally — it is NOT shipped in the site.)
-//
-// Usage:
-//   GOOGLE_API_KEY=your_key node scripts/generate-drive-manifest.mjs <FOLDER_ID>
-//   (FOLDER_ID is the token in the folder URL: drive.google.com/drive/folders/<FOLDER_ID>)
-//
-// Or via npm:
-//   GOOGLE_API_KEY=your_key npm run generate:manifest -- <FOLDER_ID>
-
 import { writeFile } from 'node:fs/promises'
+import dotenv from 'dotenv'
 
-const folderId = process.argv[2] || process.env.DRIVE_FOLDER_ID
+dotenv.config()
+
+// Accept either a bare folder ID or a full Drive URL like
+// https://drive.google.com/drive/folders/<ID>?... and extract the ID.
+function extractFolderId(input) {
+  if (!input) return input
+  const m = input.match(/\/folders\/([^/?#]+)/)
+  return m ? m[1] : input
+}
+
+const folderId = extractFolderId(process.argv[2] || process.env.DRIVE_FOLDER_ID)
 const apiKey = process.env.GOOGLE_API_KEY
 
 if (!folderId || !apiKey) {
