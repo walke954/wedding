@@ -1,0 +1,71 @@
+.photo {
+  margin: 0;
+  position: relative;
+  /* Start hidden + slightly lowered; the .visible class (added when the photo
+     scrolls into view) eases it up into place. */
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Respect users who prefer reduced motion — show photos immediately. */
+@media (prefers-reduced-motion: reduce) {
+  .photo {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Landscape photos are wider than they are tall, so let them span two grid
+   columns — they get a width that suits their aspect ratio instead of being
+   squeezed into a single narrow portrait-width column. Only kicks in once the
+   viewport is wide enough to hold two columns, so single-column (phone)
+   layouts are unaffected. */
+@media (min-width: 560px) {
+  .landscape {
+    grid-column: span 2;
+  }
+}
+
+.photo img {
+  width: 100%;
+  height: auto;
+  display: block;
+  box-sizing: border-box;
+  border: 3px solid #fff;
+  border-radius: 2px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+.photoActions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 4px;
+}
+
+.photoActions button,
+.photoActions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border: none;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.photoActions button:hover,
+.photoActions a:hover {
+  background: rgba(0, 0, 0, 0.65);
+}

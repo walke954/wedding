@@ -1,0 +1,104 @@
+.gallery {
+  position: relative;
+  min-height: 100svh;
+  /* Full-viewport spacer so the background image is all you see on first load. */
+  padding-top: 100svh;
+}
+
+/* Fixed background-image layer that the gallery scrolls over, with a constant
+   blue tint so its colors don't compete with the photos. */
+.background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image: url('../../assets/images/background.jpeg');
+  background-size: cover;
+  background-position: center;
+}
+
+.background::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Direct blue veil over the photo — a normal overlay (not multiply) so the
+     blue shows on bright areas. A vibrant, highly-saturated blue (rather than
+     the muted palette tokens) to give the page a vivid blue theme. */
+  background: hsl(203, 90%, 70%);
+  opacity: 0.6;
+}
+
+/* Title floats over the background image in the first viewport. A soft radial
+   scrim behind it lifts the white script off the photo. */
+.title {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100svh;
+  z-index: 2;
+  margin: 0;
+  padding: 0 16px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  pointer-events: none;
+  /*background: radial-gradient(
+    ellipse 70% 45% at center,
+    rgba(0, 0, 0, 0.5),
+    transparent 75%
+  );*/
+
+  & > h1 {
+    font-weight: 500;
+    /* Fluid size: scales with the viewport, floored on phones, capped on desktop. */
+    font-size: clamp(2.25rem, 10vw, 5rem);
+    letter-spacing: -1px;
+    margin: 0;
+    line-height: 1.15;
+    text-shadow:
+      0 2px 6px rgba(0, 0, 0, 0.55),
+      0 6px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  & > .date {
+    margin: 32px 0 0;
+    font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+    font-weight: 400;
+    letter-spacing: 4px;
+    text-shadow:
+      0 2px 6px rgba(0, 0, 0, 0.55),
+      0 6px 30px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  padding: 32px 24px;
+}
+
+.photoGrid {
+  display: grid;
+  /* Larger minimum column width on bigger screens means fewer, larger photos. */
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+@media (min-width: 900px) {
+  .photoGrid {
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 32px;
+  }
+}
+
+@media (min-width: 1500px) {
+  .photoGrid {
+    grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
+    gap: 40px;
+  }
+}

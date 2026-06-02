@@ -1,0 +1,42 @@
+:root {
+  --text: #6b6375;
+  --text-h: #08060d;
+  --bg: #fff;
+  --border: #e5e4e7;
+
+  --blue-lighter: #e6eef6;
+  --blue-light: #c8d9ea;
+  --blue: #a1bddc;
+  --blue-dark: #6b97c2;
+  --blue-darker: #4574a3;
+
+  --pink-lighter: #f1e0ef;
+  --pink-light: #e3c5e0;
+  --pink: #d5acd1;
+  --pink-dark: #b78ab2;
+  --pink-darker: #8c5d88;
+
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+
+  font: 18px/145% var(--sans);
+  letter-spacing: 0.18px;
+  color-scheme: light;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+}
+
+.neonderthaw-regular {
+  font-family: "Neonderthaw", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
