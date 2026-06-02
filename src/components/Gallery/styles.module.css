@@ -78,27 +78,96 @@
 .content {
   position: relative;
   z-index: 1;
-  padding: 32px 24px;
+  /* Wider, responsive side margins so photos sit closer together rather than
+     being flung to the edges; capped so they don't get huge on big screens. */
+  padding: 32px clamp(24px, 7vw, 140px);
 }
 
+/* Filter bar pinned to the top of the gallery content so categories stay
+   reachable while scrolling. */
+.filters {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 0;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  border-radius: 999px;
+}
+
+.filter,
+.filterActive {
+  appearance: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  padding: 8px 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.filter {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.filter:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.filterActive {
+  background: #fff;
+  color: hsl(203, 70%, 35%);
+  border-color: #fff;
+}
+
+.section {
+  margin-top: 40px;
+}
+
+.sectionHeading {
+  margin: 0 0 4px;
+  font-size: clamp(1.5rem, 5vw, 2.25rem);
+  font-weight: 500;
+  letter-spacing: 1px;
+  color: #fff;
+  text-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.55),
+    0 6px 30px rgba(0, 0, 0, 0.5);
+}
+
+.empty {
+  margin-top: 48px;
+  text-align: center;
+  color: #fff;
+  font-size: 1.1rem;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.55);
+}
+
+/* Row layout: photos flow left-to-right and wrap. Each photo has a fixed
+   height (set in the Photo component) and a natural width, so rows share a
+   uniform height with varied widths. A fixed gap (rather than space-between)
+   keeps the spacing between photos constant — it never grows too large, even
+   on a sparse row. */
 .photoGrid {
-  display: grid;
-  /* Larger minimum column width on bigger screens means fewer, larger photos. */
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
   margin-top: 24px;
 }
 
 @media (min-width: 900px) {
   .photoGrid {
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-    gap: 32px;
-  }
-}
-
-@media (min-width: 1500px) {
-  .photoGrid {
-    grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
-    gap: 40px;
+    gap: 24px;
   }
 }

@@ -1,19 +1,27 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import styles from './styles.module.css'
 
-const PASSWORD = 'changeme'
-const STORAGE_KEY = 'wedding-signed-in'
+export type Role = 'user' | 'admin'
 
-function isSignedIn() {
-  return localStorage.getItem(STORAGE_KEY) === 'true'
+// Which password unlocks which view. The password you enter determines the
+// role — guests get the gallery, the admin password opens the tag editor.
+const PASSWORDS: Record<string, Role> = {
+  changeme: 'user',
+  adminchangeme: 'admin',
+}
+const STORAGE_KEY = 'wedding-role'
+
+function storedRole(): Role | null {
+  const value = localStorage.getItem(STORAGE_KEY)
+  return value === 'user' || value === 'admin' ? value : null
 }
 
 type Props = {
-  children: ReactNode
+  children: (role: Role) => ReactNode
 }
 
 export function PasswordGate({ children }: Props) {
-  const [signedIn, setSignedIn] = useState(isSignedIn)
+  const [role, setRole] = useState<Role | null>(storedRole)
   const [input, setInput] = useState('')
   const [error, setError] = useState(false)
   const [nearTop, setNearTop] = useState(true)
@@ -21,20 +29,21 @@ export function PasswordGate({ children }: Props) {
   // Only show the Sign out button while scrolled near the top of the page (the
   // title screen) — it fades out once you scroll down into the photo grid.
   useEffect(() => {
-    if (!signedIn) return
+    if (!role) return
     function onScroll() {
       setNearTop(window.scrollY < window.innerHeight * 0.6)
     }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [signedIn])
+  }, [role])
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    if (input === PASSWORD) {
-      localStorage.setItem(STORAGE_KEY, 'true')
-      setSignedIn(true)
+    const matched = PASSWORDS[input]
+    if (matched) {
+      localStorage.setItem(STORAGE_KEY, matched)
+      setRole(matched)
     } else {
       setError(true)
     }
@@ -42,20 +51,23 @@ export function PasswordGate({ children }: Props) {
 
   function handleSignOut() {
     localStorage.removeItem(STORAGE_KEY)
-    setSignedIn(false)
+    setRole(null)
     setInput('')
     setError(false)
   }
 
-  if (signedIn) {
+  if (role) {
+    // The admin editor is a scrollable list with its own sticky toolbar, so
+    // keep Sign out always visible there; on the gallery it fades past the hero.
+    const showSignOut = role === 'admin' || nearTop
     return (
       <>
-        {children}
+        {children(role)}
         <button
           type="button"
-          className={`${styles.signOut} ${nearTop ? '' : styles.signOutHidden}`}
+          className={`${styles.signOut} ${showSignOut ? '' : styles.signOutHidden}`}
           onClick={handleSignOut}
-          aria-hidden={!nearTop}
+          aria-hidden={!showSignOut}
         >
           Sign out
         </button>

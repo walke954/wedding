@@ -1,46 +1,61 @@
+/* The figure reserves each photo's space using its aspect ratio at a shared
+   height, so rows have a uniform height with varied widths and nothing shifts
+   as images load. A faint placeholder fills the box until the photo fades in. */
 .photo {
   margin: 0;
   position: relative;
-  /* Start hidden + slightly lowered; the .visible class (added when the photo
-     scrolls into view) eases it up into place. */
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  height: 260px;
+  width: auto;
+  max-width: 100%;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.14);
 }
 
-.visible {
+@media (min-width: 600px) {
+  .photo {
+    height: 340px;
+  }
+}
+
+@media (min-width: 900px) {
+  .photo {
+    height: 420px;
+  }
+}
+
+@media (min-width: 1500px) {
+  .photo {
+    height: 500px;
+  }
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  box-sizing: border-box;
+  object-fit: cover;
+  border: 3px solid #fff;
+  border-radius: 2px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  /* Hidden until its bytes load, then it eases in — so you never see an empty
+     white-bordered box. */
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.loaded {
   opacity: 1;
   transform: none;
 }
 
 /* Respect users who prefer reduced motion — show photos immediately. */
 @media (prefers-reduced-motion: reduce) {
-  .photo {
-    opacity: 1;
-    transform: none;
+  .img {
     transition: none;
+    transform: none;
   }
-}
-
-/* Landscape photos are wider than they are tall, so let them span two grid
-   columns — they get a width that suits their aspect ratio instead of being
-   squeezed into a single narrow portrait-width column. Only kicks in once the
-   viewport is wide enough to hold two columns, so single-column (phone)
-   layouts are unaffected. */
-@media (min-width: 560px) {
-  .landscape {
-    grid-column: span 2;
-  }
-}
-
-.photo img {
-  width: 100%;
-  height: auto;
-  display: block;
-  box-sizing: border-box;
-  border: 3px solid #fff;
-  border-radius: 2px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
 }
 
 .photoActions {

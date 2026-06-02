@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { DownloadIcon, ExpandIcon } from '../../icons'
 import styles from './styles.module.css'
 
@@ -6,48 +6,36 @@ type Props = {
   src: string
   downloadSrc: string
   name: string
+  /** Width / height — reserves the box's width so there's no layout shift. */
+  ratio: number
   alt?: string
   onFullscreen: () => void
 }
 
-export function Photo({ src, downloadSrc, name, alt = '', onFullscreen }: Props) {
-  const [landscape, setLandscape] = useState(false)
-  const [visible, setVisible] = useState(false)
-  const figureRef = useRef<HTMLElement>(null)
-
-  // Fade each photo in as it scrolls into view. Once revealed it stays
-  // revealed, so we stop observing after the first intersection.
-  useEffect(() => {
-    const el = figureRef.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setVisible(true)
-          observer.disconnect()
-        }
-      },
-      { rootMargin: '0px 0px -10% 0px' },
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
+export function Photo({
+  src,
+  downloadSrc,
+  name,
+  ratio,
+  alt = '',
+  onFullscreen,
+}: Props) {
+  const [loaded, setLoaded] = useState(false)
 
   return (
     <figure
-      ref={figureRef}
-      className={`${styles.photo} ${landscape ? styles.landscape : ''} ${
-        visible ? styles.visible : ''
-      }`}
+      className={styles.photo}
+      // The ratio fixes the box's width at the shared height, so the space is
+      // held before the image arrives — no white borders, no reflow on load.
+      style={{ aspectRatio: ratio || 1 }}
     >
       <img
+        className={`${styles.img} ${loaded ? styles.loaded : ''}`}
         src={src}
         alt={alt}
         loading="lazy"
-        onLoad={(e) => {
-          const img = e.currentTarget
-          setLandscape(img.naturalWidth > img.naturalHeight)
-        }}
+        onLoad={() => setLoaded(true)}
+        onError={() => setLoaded(true)}
       />
       <div className={styles.photoActions}>
         <button type="button" onClick={onFullscreen} aria-label="View fullscreen">

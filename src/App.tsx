@@ -1,10 +1,11 @@
 import { PasswordGate } from './components/PasswordGate'
 import { Gallery } from './components/Gallery'
+import { Admin } from './components/Admin'
 
 function App() {
   return (
     <PasswordGate>
-      <Gallery />
+      {(role) => (role === 'admin' ? <Admin /> : <Gallery />)}
     </PasswordGate>
   )
 }
